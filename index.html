@@ -4349,7 +4349,7 @@
 
               <script>
               (function () {
-                const allowedDomain = "netlify.app";
+                const allowedDomain = "https://app.netlify.com/";
                 const allowedPath = "/olikeai.netlify.app";
 
                 const isValidDomain = location.hostname.endsWith(allowedDomain);
@@ -4377,7 +4377,7 @@
               </script>
               <script>
               setTimeout(() => {
-                if (!location.href.includes("https://olikeai.netlify.app")) {
+                if (!location.href.includes("olikeai.netlify.app")) {
                   document.body.innerHTML = "";
                 }
               }, 500);
