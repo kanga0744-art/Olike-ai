@@ -1634,12 +1634,6 @@
         input:checked + .slider:before {
             transform: translateX(16px); 
         }
-
-        /* DISABLED STATE STYLE */
-        .ui-switch input:disabled + .slider {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
         
         /* API STATUS ICON STYLE */
         #api-key-status-icon {
@@ -1711,7 +1705,7 @@
         <aside class="floating-sidebar left" id="sidebar-left">
             <div class="control-group">
                 <label for="pollinations-api-key-input" style="display:flex; justify-content:space-between; align-items:center;">
-                    <a href="https://enter.pollinations.ai/authorize?redirect_url=https://olikeai.netlify.app" target="_blank" class="get-api-link" style="color: var(--primary-color); text-decoration:none; display:flex; align-items:center; gap:6px;">
+                    <a href="https://enter.pollinations.ai/authorize?redirect_url=https://perchance.org/olike" target="_blank" class="get-api-link" style="color: var(--primary-color); text-decoration:none; display:flex; align-items:center; gap:6px;">
                         <span data-i18n="get_api_key">Get API Key</span> <i class="fas fa-external-link-alt" style="font-size:0.8em"></i>
                     </a>
                     <i class="fas fa-key" id="api-key-status-icon"></i>
@@ -1884,11 +1878,11 @@
         <!-- RIGHT SIDEBAR: TECHNICAL SPECS -->
         <aside class="floating-sidebar right" id="sidebar-right">
             <!-- MIXER 3.0 NSFW UI -->
-            <div class="mixer-container" id="nsfw-mixer-group" style="display: none;">
+            <div class="mixer-container" id="nsfw-mixer-group">
                 <div class="mixer-header">
                     <div class="mixer-label"><i class="fas fa-tags"></i> <span data-i18n="mixer_3">Mixer 3.0</span></div>
                     <label class="ui-switch">
-                        <input type="checkbox" id="nsfw_mixer_toggle" disabled>
+                        <input type="checkbox" id="nsfw_mixer_toggle">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -1907,11 +1901,11 @@
             </div>
 
             <!-- MIXER 4.0 (View Preset) -->
-            <div class="mixer-container" id="mix4-mixer-group" style="display: none;">
+            <div class="mixer-container" id="mix4-mixer-group">
                 <div class="mixer-header">
                     <div class="mixer-label"><i class="fas fa-palette"></i> <span data-i18n="mixer_4">Mixer 4.0 (View)</span></div>
                     <label class="ui-switch">
-                        <input type="checkbox" id="mix4_mixer_toggle" disabled>
+                        <input type="checkbox" id="mix4_mixer_toggle">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -1965,14 +1959,14 @@
                     </label></label>
                 </div>
 
-                <div class="control-group" style="display: none;">
+                <div class="control-group">
                     <label><span data-i18n="nsfw_mode">NSFW Mode</span> <label class="ui-switch">
-                        <input type="checkbox" id="nsfw_toggle" disabled>
+                        <input type="checkbox" id="nsfw_toggle">
                         <span class="slider"></span>
                     </label></label>
                 </div>
                 
-                <div class="control-group" style="display: none;">
+                <div class="control-group">
                     <label><span data-i18n="nsfw_strength">NSFW Strength</span> <span class="value-display" id="nsfw-strength-display">50</span></label>
                     <input type="range" id="nsfw_strength" min="0" max="100" step="1" value="50" disabled>
                 </div>
@@ -2826,8 +2820,7 @@
                     if(inputs.guidance) inputs.guidance.value = savedConfig.guidance || '3.5';
                     if(inputs.seed) inputs.seed.value = savedConfig.seed || '';
                     if(inputs.numImages) inputs.numImages.value = savedConfig.numImages || '1'; 
-                    // DISABLE NSFW / MIXERS by default for community
-                    if(inputs.nsfwToggle) inputs.nsfwToggle.checked = false; // savedConfig.nsfwMode || false;
+                    if(inputs.nsfwToggle) inputs.nsfwToggle.checked = savedConfig.nsfwMode || false;
                     if(inputs.nsfwStrength) inputs.nsfwStrength.value = savedConfig.nsfwStrength || '50';
                     if(inputs.enhanceToggle) inputs.enhanceToggle.checked = savedConfig.enhanceMode !== undefined ? savedConfig.enhanceMode : true;
                     if(inputs.pollinationsApiKeyInput) inputs.pollinationsApiKeyInput.value = savedConfig.pollinationsApiKey || '';
@@ -2849,16 +2842,25 @@
                         switchTab(savedConfig.activeTab);
                     }
                     
-                    // Restore Mixer (DISABLED FOR COMMUNITY)
+                    // Restore Mixer
                     if (inputs.nsfwMixerToggle) {
-                        inputs.nsfwMixerToggle.checked = false; // savedConfig.nsfwMixerActive || false;
-                        toggleMixerDisplay(false);
+                        inputs.nsfwMixerToggle.checked = savedConfig.nsfwMixerActive || false;
+                        toggleMixerDisplay(inputs.nsfwMixerToggle.checked);
+                        // Safe check for nsfwSelectedList
+                        if (savedConfig.nsfwMixerTags && Array.isArray(savedConfig.nsfwMixerTags) && nsfwSelectedList) {
+                            nsfwSelectedList.innerHTML = '';
+                            savedConfig.nsfwMixerTags.forEach(tag => addNsfwItem(tag.name, tag.value));
+                        }
                     }
                     
-                    // Restore Mixer 4.0 (DISABLED FOR COMMUNITY)
+                    // Restore Mixer 4.0
                     if (inputs.mix4MixerToggle) {
-                        inputs.mix4MixerToggle.checked = false; // savedConfig.mix4MixerActive === true; 
-                        toggleMixer4Display(false);
+                        inputs.mix4MixerToggle.checked = savedConfig.mix4MixerActive === true; // Default OFF unless explicitly TRUE
+                        toggleMixer4Display(inputs.mix4MixerToggle.checked);
+                        if (savedConfig.mix4MixerTags && Array.isArray(savedConfig.mix4MixerTags) && mix4SelectedList) {
+                            mix4SelectedList.innerHTML = '';
+                            savedConfig.mix4MixerTags.forEach(tag => addMix4Item(tag.name, tag.value));
+                        }
                     }
                 }
                 
@@ -4345,3 +4347,4 @@
     </script>
 </body>
 </html>
+
