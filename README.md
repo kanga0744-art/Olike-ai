@@ -1,4 +1,4 @@
-# Olike-ai
+# Olike-ai open Source
 Web image generator, with pollination base. Equipped with the latest model updates.
 Olike - AI Image Generator
 An intuitive and fast generation AI image platform, powered by cutting-edge models from Pollinations. Produce high-quality images from text (T2I), convert images based on instructions (I2I), to analyze images into descriptive prompt (I2P).
